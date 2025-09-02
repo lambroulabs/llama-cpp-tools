@@ -91,8 +91,6 @@ The registry builds per-tool schemas (name, description, parameters) using the s
 
 ## Handling the model's response and invoking tools
 
-Typical flow when the LLM returns a tool call (example JSON in the repo README):
-
 1. Parse the HTTP response body into `nlohmann::json`.
 2. Use `handle_tool_call_response(api_response)` to find and invoke the first tool call. It returns the tool's JSON result.
 3. Send the tool result back to the model as a follow-up message so the model can produce a final assistant message.
