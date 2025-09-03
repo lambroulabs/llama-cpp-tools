@@ -5,7 +5,7 @@ Summary:        C++ llama.cpp function-calling tool registry
 
 License:        MIT
 URL:            https://github.com/lambroulabs/llama-cpp-tools
-Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  cmake
 BuildRequires:  gcc

@@ -13,12 +13,11 @@ source=("https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/v${pkg
 sha256sums=('SKIP')
 
 build() {
-  cmake -S . -B build \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr
-  cmake --build build -- -j$(nproc)
+  cd "$srcdir/llama-cpp-tools-$pkgver"
+  cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+  cmake --build build
 }
-
 package() {
+  cd "$srcdir/llama-cpp-tools-$pkgver"
   DESTDIR="$pkgdir" cmake --install build
 }

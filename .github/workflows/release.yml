@@ -53,7 +53,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: debian-packages
-          path: ../*.deb
+          path: ${{ github.workspace }}/*.deb
+
 
   build-fedora:
     runs-on: ubuntu-latest
