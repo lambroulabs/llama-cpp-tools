@@ -55,55 +55,6 @@ jobs:
           name: debian-packages
           path: ${{ github.workspace }}/*.deb
 
-
-  build-fedora:
-    runs-on: ubuntu-latest
-    container: fedora:39
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install deps
-        run: dnf install -y cmake gcc make rpm-build json-devel lcov gcc-c++ curl-devel catch-devel git
-
-      - name: Build with CMake + CPack (with coverage)
-        run: |
-          mkdir build && cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Debug \
-                   -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
-          cmake --build . -- -j$(nproc)
-          ctest --output-on-failure || true
-          lcov --capture --directory . --output-file coverage.info --ignore-errors source,negative
-          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source,negative
-          genhtml coverage.info --output-directory coverage-html
-          mkdir -p ../coverage-html/fedora
-          cp -r coverage-html/* ../coverage-html/fedora/
-
-      - name: Create tarball for RPM
-        run: |
-          cd build
-          cpack -G TGZ
-          TAR_NAME="llama-cpp-tools-${GITHUB_REF_NAME#v}.tar.gz"
-          mv llama-cpp-tools-*.tar.gz ../$TAR_NAME
-          cd ..
-
-
-      - name: Build RPM from spec
-        run: |
-          dnf install -y rpmdevtools
-          rpmdev-setuptree
-          cp packaging/RHEL/llama-cpp-tools.spec ~/rpmbuild/SPECS/
-          cp "llama-cpp-tools-${GITHUB_REF_NAME#v}.tar.gz" ~/rpmbuild/SOURCES/
-          rpmbuild -ba ~/rpmbuild/SPECS/llama-cpp-tools.spec
-
-      - name: Upload Fedora RPM artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: fedora-rpms
-          path: /github/home/rpmbuild/RPMS/**/*.rpm
-
-
   build-arch:
     runs-on: ubuntu-latest
     container: archlinux:latest
@@ -149,7 +100,7 @@ jobs:
 
   upload-coverage:
     runs-on: ubuntu-latest
-    needs: [build-ubuntu, build-fedora, build-arch]
+    needs: [build-ubuntu, build-arch]
     steps:
       - uses: actions/checkout@v4
       - name: Collect coverage

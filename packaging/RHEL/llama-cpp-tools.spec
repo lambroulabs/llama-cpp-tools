@@ -30,7 +30,7 @@ The llama-cpp-tools development package contains headers, CMake config
 files, and other resources needed to build software against llama-cpp-tools.
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup -n %{name}-v%{version}
 
 %build
 %cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%{_prefix}

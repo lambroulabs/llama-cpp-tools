@@ -5,5 +5,6 @@
 override_dh_auto_install:
 	cmake --install build --prefix=$(CURDIR)/debian/tmp/usr
 
-override_dh_installdocs:
-	dh_installdocs --sourcedir=debian/tmp usr/share/doc/llama-cpp-tools/LICENSE
+override_dh_auto_install:
+	cmake --install build --prefix=/usr --destdir=$(CURDIR)/debian/tmp
+	install -Dm644 LICENSE $(CURDIR)/debian/tmp/usr/share/doc/llama-cpp-tools/LICENSE
