@@ -28,7 +28,7 @@ set_target_properties(llama_cpp_tools PROPERTIES
 
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
-  find_package(Catch2 3 REQUIRED)
+  find_package(Catch2 REQUIRED)
   enable_testing()
   add_executable(tests tests/tests.cpp)
   target_link_libraries(tests
