@@ -35,8 +35,8 @@ jobs:
       - name: Generate coverage report (Ubuntu)
         run: |
           cd build
-          lcov --capture --directory . --output-file coverage.info --ignore-errors source
-          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
+          lcov --capture --directory . --output-file coverage.info --ignore-errors source,negative
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source,negative
           genhtml coverage.info --output-directory coverage-html
           mkdir -p ../coverage-html/ubuntu
           cp -r coverage-html/* ../coverage-html/ubuntu/
@@ -73,8 +73,8 @@ jobs:
                   -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
           cmake --build . -- -j$(nproc)
           ctest --output-on-failure || true
-          lcov --capture --directory . --output-file coverage.info --ignore-errors source
-          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
+          lcov --capture --directory . --output-file coverage.info --ignore-errors source,negative
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source,negative
           genhtml coverage.info --output-directory coverage-html
           mkdir -p ../coverage-html/fedora
           cp -r coverage-html/* ../coverage-html/fedora/
@@ -83,7 +83,8 @@ jobs:
         run: |
           TAG_NAME=${GITHUB_REF_NAME}
           VERSION="${TAG_NAME#v}"
-          git archive --format=tar.gz --prefix=llama-cpp-tools-${VERSION}/ HEAD -o llama-cpp-tools-${VERSION}.tar.gz
+          curl -L -o llama-cpp-tools-${VERSION}.tar.gz \
+              https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/${TAG_NAME}.tar.gz
 
       - name: Build RPM from spec
         run: |
@@ -126,8 +127,8 @@ jobs:
                    -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
           cmake --build . -- -j$(nproc)
           ctest --output-on-failure || true
-          lcov --capture --directory . --output-file coverage.info --ignore-errors source
-          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
+          lcov --capture --directory . --output-file coverage.info --ignore-errors source,negative
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source,negative
           genhtml coverage.info --output-directory coverage-html
           mkdir -p ../coverage-html/arch
           cp -r coverage-html/* ../coverage-html/arch/

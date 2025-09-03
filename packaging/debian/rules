@@ -3,4 +3,4 @@
 	dh $@ --buildsystem=cmake
 
 override_dh_auto_install:
-	cmake --install build -- DESTDIR=$(CURDIR)/debian/tmp
+	cmake --install build --prefix=$(CURDIR)/debian/tmp/usr
