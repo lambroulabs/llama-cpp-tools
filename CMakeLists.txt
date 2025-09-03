@@ -30,11 +30,14 @@ option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
   enable_testing()
 
-  find_path(CATCH2_INCLUDE_DIR catch2/catch.hpp
+  # Try to find Catch2 headers
+  find_path(CATCH2_INCLUDE_DIR catch2/catch_all.hpp
     PATHS /usr/include /usr/local/include
   )
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Catch2 DEFAULT_MSG CATCH2_INCLUDE_DIR)
+
+  if(NOT CATCH2_INCLUDE_DIR)
+    message(FATAL_ERROR "Catch2 headers not found. Please install Catch2 v3 (package: catch2, catch2-dev, or similar).")
+  endif()
 
   add_executable(tests tests/tests.cpp)
   target_include_directories(tests PRIVATE ${CATCH2_INCLUDE_DIR})
@@ -42,6 +45,7 @@ if(BUILD_TESTS)
 
   add_test(NAME llama_cpp_tools_tests COMMAND tests)
 endif()
+
 
 install(TARGETS llama_cpp_tools
   EXPORT llama_cpp_toolsTargets
