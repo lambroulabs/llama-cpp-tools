@@ -11,7 +11,7 @@ BuildRequires:  cmake
 BuildRequires:  gcc
 BuildRequires:  make
 BuildRequires:  json-devel
-BuildRequires:  catch2-devel
+BuildRequires:  catch-devel
 BuildRequires:  gcc-c++
 Requires:       glibc
 
