@@ -1,5 +1,5 @@
 # debian/install
-build/libllama_cpp_tools.so usr/lib/
-build/include/* usr/include/llama_cpp_tools/
-build/lib/cmake/llama-cpp-tools/* usr/lib/cmake/llama-cpp-tools/
-build/lib/pkgconfig/llama-cpp-tools.pc usr/lib/pkgconfig/
+usr/lib/libllama_cpp_tools.so*
+usr/include/llama_cpp_tools/*
+usr/lib/cmake/llama-cpp-tools/*
+usr/lib/pkgconfig/llama-cpp-tools.pc
