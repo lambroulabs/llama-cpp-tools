@@ -38,9 +38,6 @@ set_target_properties(llama_cpp_tools PROPERTIES
   PUBLIC_HEADER "include/llama_cpp_tools/tool_registry.h"
 )
 
-add_executable(example_app examples/example_app.cpp)
-target_link_libraries(example_app PRIVATE llama_cpp_tools nlohmann_json::nlohmann_json)
-
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
   include(FetchContent)
@@ -64,8 +61,6 @@ install(TARGETS llama_cpp_tools
 )
 
 install(DIRECTORY include/ DESTINATION include)
-
-install(TARGETS example_app RUNTIME DESTINATION bin)
 
 install(EXPORT llama_cpp_toolsTargets
   FILE llama_cpp_toolsTargets.cmake
