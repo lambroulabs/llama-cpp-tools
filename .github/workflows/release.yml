@@ -137,7 +137,7 @@ jobs:
           useradd -m builder
           chown -R builder:builder .
           cd packaging/arch
-          su builder -c "makepkg -si --noconfirm --clean --syncdeps"
+          su builder -c "makepkg --noconfirm --clean --syncdeps"
 
       - name: Upload Arch package
         uses: actions/upload-artifact@v4

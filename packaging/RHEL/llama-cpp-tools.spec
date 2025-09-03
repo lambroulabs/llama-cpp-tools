@@ -41,9 +41,10 @@ files, and other resources needed to build software against llama-cpp-tools.
 
 %files
 %license LICENSE
-%doc README.md
-%{_bindir}/*
-%{_libdir}/libllama-cpp-tools.so.*
+%{_libdir}/libllama_cpp_tools.so*
+%{_libdir}/cmake/llama-cpp-tools/*
+%{_libdir}/pkgconfig/llama-cpp-tools.pc
+%{_includedir}/llama_cpp_tools/*
 
 %files devel
 %{_includedir}/llama-cpp-tools/

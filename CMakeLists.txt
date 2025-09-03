@@ -6,9 +6,28 @@ cmake_policy(VERSION 3.14)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
 set(JSON_Install OFF CACHE INTERNAL "")
 find_package(nlohmann_json 3.2.0 REQUIRED)
+
+# Prefer lib64 on 64-bit RHEL/Fedora
+include(GNUInstallDirs)
+
+install(TARGETS llama_cpp_tools
+  EXPORT llama_cpp_toolsTargets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   # automatically lib64 on x86_64
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llama_cpp_tools
+)
+
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(EXPORT llama_cpp_toolsTargets
+  FILE llama_cpp_toolsTargets.cmake
+  NAMESPACE llama_cpp_tools::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llama-cpp-tools
+)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llama-cpp-tools.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DOCDIR})
+
 
 add_library(llama_cpp_tools SHARED src/tool_registry.cpp)
 target_link_libraries(llama_cpp_tools PRIVATE nlohmann_json::nlohmann_json)
