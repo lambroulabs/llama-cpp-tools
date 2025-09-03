@@ -8,7 +8,7 @@ arch=('x86_64')
 url="https://github.com/lambroulabs/llama-cpp-tools"
 license=('MIT')
 depends=('glibc')
-makedepends=('cmake' 'make' 'gcc' 'nlohmann-json')
+makedepends=('cmake' 'make' 'gcc' 'nlohmann-json', 'catch2')
 source=("git+$url.git#tag=v$pkgver")
 sha256sums=('SKIP')
 

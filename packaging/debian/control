@@ -2,7 +2,7 @@ Source: llama-cpp-tools
 Section: devel
 Priority: optional
 Maintainer: Alexander Lambrou <alexanderlambrou0602@gmail.com>
-Build-Depends: debhelper-compat (= 13), cmake, g++, nlohmann-json3-dev
+Build-Depends: debhelper-compat (= 13), cmake, g++, nlohmann-json3-dev, catch2
 Standards-Version: 4.6.2
 Homepage: https://github.com/lambroulabs/llama-cpp-tools
 Vcs-Git: https://github.com/lambroulabs/llama-cpp-tools
