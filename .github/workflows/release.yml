@@ -1,0 +1,95 @@
+name: Build and Release Packages
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build \
+            debhelper devscripts dpkg-dev \
+            nlohmann-json3-dev
+
+      - name: Build with CMake + CPack
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build . -- -j$(nproc)
+          cpack -G DEB
+          cpack -G TGZ
+        working-directory: .
+
+      - name: Build Debian Policy Packages
+        run: |
+          dpkg-buildpackage -us -uc -b
+        working-directory: .
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-packages
+          path: ../*.deb
+
+  build-fedora:
+    runs-on: ubuntu-latest
+    container: fedora:39
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          dnf install -y cmake gcc make rpm-build nlohmann-json-devel
+
+      - name: Build with CPack RPM
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build . -- -j$(nproc)
+          cpack -G RPM
+
+      - name: Build RPM from spec
+        run: |
+          dnf install -y rpmdevtools
+          rpmdev-setuptree
+          cp llama-cpp-tools.spec ~/rpmbuild/SPECS/
+          cp ../*.tar.gz ~/rpmbuild/SOURCES/
+          rpmbuild -ba ~/rpmbuild/SPECS/llama-cpp-tools.spec
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fedora-rpms
+          path: /github/home/rpmbuild/RPMS/**/*.rpm
+
+build-arch:
+  runs-on: ubuntu-latest
+  container: archlinux:latest
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Install deps
+      run: pacman -Syu --noconfirm base-devel git cmake nlohmann-json
+
+    - name: Compute SHA256 of release tarball
+      run: |
+        curl -L -o v${{ github.ref_name }}.tar.gz \
+          https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/${{ github.ref_name }}.tar.gz
+        SHA=$(sha256sum v${{ github.ref_name }}.tar.gz | awk '{print $1}')
+        sed -i "s/sha256sums=('SKIP')/sha256sums=('${SHA}')/" PKGBUILD
+
+    - name: Build Arch package
+      run: makepkg -si --noconfirm --clean --syncdeps
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: arch-packages
+        path: "*.pkg.tar.zst"
