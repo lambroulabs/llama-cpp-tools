@@ -28,18 +28,20 @@ set_target_properties(llama_cpp_tools PROPERTIES
 
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
-  find_package(Catch2 REQUIRED)
   enable_testing()
-  add_executable(tests tests/tests.cpp)
-  target_link_libraries(tests
-    PRIVATE
-      llama_cpp_tools
-      nlohmann_json::nlohmann_json
-      Catch2::Catch2
+
+  find_path(CATCH2_INCLUDE_DIR catch2/catch.hpp
+    PATHS /usr/include /usr/local/include
   )
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(Catch2 DEFAULT_MSG CATCH2_INCLUDE_DIR)
+
+  add_executable(tests tests/tests.cpp)
+  target_include_directories(tests PRIVATE ${CATCH2_INCLUDE_DIR})
+  target_link_libraries(tests PRIVATE llama_cpp_tools nlohmann_json::nlohmann_json)
+
   add_test(NAME llama_cpp_tools_tests COMMAND tests)
 endif()
-
 
 install(TARGETS llama_cpp_tools
   EXPORT llama_cpp_toolsTargets
