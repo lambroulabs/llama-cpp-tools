@@ -71,7 +71,7 @@ jobs:
         run: |
           mkdir build && cd build
           cmake .. -DCMAKE_BUILD_TYPE=Debug \
-                  -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
+                   -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
           cmake --build . -- -j$(nproc)
           ctest --output-on-failure || true
           lcov --capture --directory . --output-file coverage.info --ignore-errors source,negative
@@ -82,10 +82,10 @@ jobs:
 
       - name: Create tarball for RPM
         run: |
-          TAG_NAME=${GITHUB_REF_NAME}
-          VERSION="${TAG_NAME#v}"
-          curl -L -o llama-cpp-tools-${VERSION}.tar.gz \
-              https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/${TAG_NAME}.tar.gz
+          cd build
+          cpack -G TGZ
+          mv llama-cpp-tools-*.tar.gz ..
+          cd ..
 
       - name: Build RPM from spec
         run: |
@@ -94,6 +94,7 @@ jobs:
           cp packaging/RHEL/llama-cpp-tools.spec ~/rpmbuild/SPECS/
           cp llama-cpp-tools-*.tar.gz ~/rpmbuild/SOURCES/
           rpmbuild -ba ~/rpmbuild/SPECS/llama-cpp-tools.spec
+
 
       - name: Upload Fedora RPM artifacts
         uses: actions/upload-artifact@v4

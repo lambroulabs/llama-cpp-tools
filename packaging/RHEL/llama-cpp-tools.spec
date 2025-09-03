@@ -37,7 +37,8 @@ files, and other resources needed to build software against llama-cpp-tools.
 %cmake_build
 
 %install
-%cmake_install
+rm -rf %{buildroot}
+cmake --install /path/to/build --prefix=/usr --destdir=%{buildroot}
 
 %files
 %license LICENSE
