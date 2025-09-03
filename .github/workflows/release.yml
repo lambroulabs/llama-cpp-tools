@@ -84,15 +84,17 @@ jobs:
         run: |
           cd build
           cpack -G TGZ
-          mv llama-cpp-tools-*.tar.gz ..
+          TAR_NAME="llama-cpp-tools-${GITHUB_REF_NAME#v}.tar.gz"
+          mv llama-cpp-tools-*.tar.gz ../$TAR_NAME
           cd ..
+
 
       - name: Build RPM from spec
         run: |
           dnf install -y rpmdevtools
           rpmdev-setuptree
           cp packaging/RHEL/llama-cpp-tools.spec ~/rpmbuild/SPECS/
-          cp llama-cpp-tools-*.tar.gz ~/rpmbuild/SOURCES/
+          cp "llama-cpp-tools-${GITHUB_REF_NAME#v}.tar.gz" ~/rpmbuild/SOURCES/
           rpmbuild -ba ~/rpmbuild/SPECS/llama-cpp-tools.spec
 
       - name: Upload Fedora RPM artifacts
