@@ -30,7 +30,6 @@ compile_commands.json
 *.log
 *.tmp
 
-/packaging/
 /packaging/debian/tmp/
 /packaging/*.deb
 /packaging/*.rpm

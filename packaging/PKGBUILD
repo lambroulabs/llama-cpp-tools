@@ -1,0 +1,24 @@
+# Maintainer: Alexander Lambrou <alexanderlambrou0602@gmail.com>
+
+pkgname=llama-cpp-tools
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="C++ llama.cpp function calling tool registry"
+arch=('x86_64')
+url="https://github.com/lambroulabs/llama-cpp-tools"
+license=('MIT')
+depends=('glibc')
+makedepends=('cmake' 'make' 'gcc' 'nlohmann-json')
+source=("git+$url.git#tag=v$pkgver")
+sha256sums=('SKIP')
+
+build() {
+  cmake -S . -B build \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build -- -j$(nproc)
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}
