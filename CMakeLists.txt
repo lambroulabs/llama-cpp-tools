@@ -35,7 +35,7 @@ if(BUILD_TESTS)
     PRIVATE
       llama_cpp_tools
       nlohmann_json::nlohmann_json
-      Catch2::Catch2
+      catch2::catch2
   )
   add_test(NAME llama_cpp_tools_tests COMMAND tests)
 endif()
