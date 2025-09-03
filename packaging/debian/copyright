@@ -1,0 +1,7 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: llama-cpp-tools
+Source: https://github.com/lambroulabs/llama-cpp-tools
+
+Files: *
+Copyright: 2025 Alexander Lambrou
+License: MIT

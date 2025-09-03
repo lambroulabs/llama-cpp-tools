@@ -1,0 +1,2 @@
+debian/tmp/usr/include/* usr/include/
+debian/tmp/usr/lib/cmake/* usr/lib/cmake/
