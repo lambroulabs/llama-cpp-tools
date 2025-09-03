@@ -35,8 +35,8 @@ jobs:
       - name: Generate coverage report (Ubuntu)
         run: |
           cd build
-          lcov --capture --directory . --output-file coverage.info
-          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info
+          lcov --capture --directory . --output-file coverage.info --ignore-errors source
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
           genhtml coverage.info --output-directory coverage-html
 
       - name: Upload coverage artifact
@@ -85,8 +85,8 @@ jobs:
       - name: Generate coverage report (Fedora)
         run: |
           cd build
-          lcov --capture --directory . --output-file coverage.info
-          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info
+          lcov --capture --directory . --output-file coverage.info --ignore-errors source
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
           genhtml coverage.info --output-directory coverage-html
 
       - name: Upload Fedora coverage artifact
@@ -133,8 +133,8 @@ jobs:
                    -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
           cmake --build . -- -j$(nproc)
           ctest --output-on-failure || true
-          lcov --capture --directory . --output-file coverage.info
-          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info
+          lcov --capture --directory . --output-file coverage.info --ignore-errors source
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
           genhtml coverage.info --output-directory coverage-html
           cd ..
           makepkg -si --noconfirm --clean --syncdeps
