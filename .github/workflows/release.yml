@@ -16,23 +16,43 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential cmake ninja-build \
             debhelper devscripts dpkg-dev \
-            nlohmann-json3-dev
+            nlohmann-json3-dev lcov
 
-      - name: Build with CMake + CPack
+      - name: Build with CMake + CPack (with coverage)
         run: |
           mkdir build && cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake .. -DCMAKE_BUILD_TYPE=Debug \
+                   -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
           cmake --build . -- -j$(nproc)
+
+      - name: Run tests (Ubuntu)
+        run: |
+          cd build
+          ctest --output-on-failure
+        continue-on-error: true
+
+      - name: Generate coverage report (Ubuntu)
+        run: |
+          cd build
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info
+          genhtml coverage.info --output-directory coverage-html
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-coverage
+          path: build/coverage-html
+
+      - name: Package with CPack and Debian policy
+        run: |
+          cd build
           cpack -G DEB
           cpack -G TGZ
-        working-directory: .
-
-      - name: Build Debian Policy Packages
-        run: |
+          cd ..
           dpkg-buildpackage -us -uc -b
-        working-directory: .
 
-      - name: Upload artifacts
+      - name: Upload Debian artifacts
         uses: actions/upload-artifact@v4
         with:
           name: debian-packages
@@ -45,15 +65,34 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install deps
-        run: |
-          dnf install -y cmake gcc make rpm-build nlohmann-json-devel
+        run: dnf install -y cmake gcc make rpm-build nlohmann-json-devel lcov
 
-      - name: Build with CPack RPM
+      - name: Build with CMake + CPack (with coverage)
         run: |
           mkdir build && cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake .. -DCMAKE_BUILD_TYPE=Debug \
+                   -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
           cmake --build . -- -j$(nproc)
           cpack -G RPM
+
+      - name: Run tests (Fedora)
+        run: |
+          cd build
+          ctest --output-on-failure
+        continue-on-error: true
+
+      - name: Generate coverage report (Fedora)
+        run: |
+          cd build
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info
+          genhtml coverage.info --output-directory coverage-html
+
+      - name: Upload Fedora coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fedora-coverage
+          path: build/coverage-html
 
       - name: Build RPM from spec
         run: |
@@ -63,33 +102,49 @@ jobs:
           cp ../*.tar.gz ~/rpmbuild/SOURCES/
           rpmbuild -ba ~/rpmbuild/SPECS/llama-cpp-tools.spec
 
-      - name: Upload artifacts
+      - name: Upload Fedora RPM artifacts
         uses: actions/upload-artifact@v4
         with:
           name: fedora-rpms
           path: /github/home/rpmbuild/RPMS/**/*.rpm
 
-build-arch:
-  runs-on: ubuntu-latest
-  container: archlinux:latest
-  steps:
-    - uses: actions/checkout@v4
+  build-arch:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Install deps
-      run: pacman -Syu --noconfirm base-devel git cmake nlohmann-json
+      - name: Install deps
+        run: pacman -Syu --noconfirm base-devel git cmake nlohmann-json lcov
 
-    - name: Compute SHA256 of release tarball
-      run: |
-        curl -L -o v${{ github.ref_name }}.tar.gz \
-          https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/${{ github.ref_name }}.tar.gz
-        SHA=$(sha256sum v${{ github.ref_name }}.tar.gz | awk '{print $1}')
-        sed -i "s/sha256sums=('SKIP')/sha256sums=('${SHA}')/" PKGBUILD
+      - name: Compute SHA256 of release tarball
+        run: |
+          curl -L -o v${{ github.ref_name }}.tar.gz \
+            https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/${{ github.ref_name }}.tar.gz
+          SHA=$(sha256sum v${{ github.ref_name }}.tar.gz | awk '{print $1}')
+          sed -i "s/sha256sums=('SKIP')/sha256sums=('${SHA}')/" PKGBUILD
 
-    - name: Build Arch package
-      run: makepkg -si --noconfirm --clean --syncdeps
+      - name: Build Arch package (with coverage)
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Debug \
+                   -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
+          cmake --build . -- -j$(nproc)
+          ctest --output-on-failure || true
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info
+          genhtml coverage.info --output-directory coverage-html
+          cd ..
+          makepkg -si --noconfirm --clean --syncdeps
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: arch-packages
-        path: "*.pkg.tar.zst"
+      - name: Upload Arch coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: arch-coverage
+          path: build/coverage-html
+
+      - name: Upload Arch package
+        uses: actions/upload-artifact@v4
+        with:
+          name: arch-packages
+          path: "*.pkg.tar.zst"
