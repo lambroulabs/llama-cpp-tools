@@ -9,26 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(JSON_Install OFF CACHE INTERNAL "")
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
-# Prefer lib64 on 64-bit RHEL/Fedora
-include(GNUInstallDirs)
-
-install(TARGETS llama_cpp_tools
-  EXPORT llama_cpp_toolsTargets
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   # automatically lib64 on x86_64
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llama_cpp_tools
-)
-
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(EXPORT llama_cpp_toolsTargets
-  FILE llama_cpp_toolsTargets.cmake
-  NAMESPACE llama_cpp_tools::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llama-cpp-tools
-)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llama-cpp-tools.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DOCDIR})
-
-
 add_library(llama_cpp_tools SHARED src/tool_registry.cpp)
 target_link_libraries(llama_cpp_tools PRIVATE nlohmann_json::nlohmann_json)
 
@@ -36,8 +16,6 @@ target_include_directories(llama_cpp_tools
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-  PRIVATE
-    $<BUILD_INTERFACE:${openai_cpp_SOURCE_DIR}/include>
 )
 
 set_target_properties(llama_cpp_tools PROPERTIES
@@ -60,24 +38,29 @@ if(BUILD_TESTS)
   add_test(NAME llama_cpp_tools_tests COMMAND tests)
 endif()
 
+# Prefer lib64 on 64-bit RHEL/Fedora
+include(GNUInstallDirs)
 
 install(TARGETS llama_cpp_tools
   EXPORT llama_cpp_toolsTargets
-  LIBRARY DESTINATION lib
-  PUBLIC_HEADER DESTINATION include/llama_cpp_tools
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   # automatically lib64 on x86_64
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llama_cpp_tools
 )
 
-install(DIRECTORY include/ DESTINATION include)
-
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(EXPORT llama_cpp_toolsTargets
   FILE llama_cpp_toolsTargets.cmake
   NAMESPACE llama_cpp_tools::
-  DESTINATION lib/cmake/llama-cpp-tools
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llama-cpp-tools
 )
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/llama-cpp-tools.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/llama-cpp-tools.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llama-cpp-tools.pc DESTINATION lib/pkgconfig)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llama-cpp-tools.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DOCDIR})
+
+
 
 set(CPACK_GENERATOR "DEB;RPM;TGZ")
 set(CPACK_PACKAGE_NAME "llama-cpp-tools")
