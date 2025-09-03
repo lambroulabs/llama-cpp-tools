@@ -16,8 +16,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential cmake ninja-build \
             debhelper devscripts dpkg-dev \
-            nlohmann-json3-dev lcov curl libcurl4-openssl-dev libcatch2-dev
-
+            nlohmann-json3-dev lcov curl libcurl4-openssl-dev catch2
       - name: Build with CMake + CPack (with coverage)
         run: |
           mkdir build && cd build
