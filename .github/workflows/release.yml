@@ -60,6 +60,8 @@ jobs:
     container: fedora:39
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install deps
         run: dnf install -y cmake gcc make rpm-build json-devel lcov gcc-c++ curl-devel catch-devel git
@@ -79,8 +81,8 @@ jobs:
 
       - name: Create tarball for RPM
         run: |
-          TAG_NAME=${GITHUB_REF_NAME}        # e.g., v0.1.0
-          VERSION="${TAG_NAME#v}"           # remove leading 'v'
+          TAG_NAME=${GITHUB_REF_NAME}
+          VERSION="${TAG_NAME#v}"
           git archive --format=tar.gz --prefix=llama-cpp-tools-${VERSION}/ HEAD -o llama-cpp-tools-${VERSION}.tar.gz
 
       - name: Build RPM from spec
