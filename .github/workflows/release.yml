@@ -16,12 +16,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential cmake ninja-build \
             debhelper devscripts dpkg-dev \
-            nlohmann-json3-dev lcov curl
+            nlohmann-json3-dev lcov curl libcurl4-openssl-dev
 
       - name: Build with CMake + CPack (with coverage)
         run: |
           mkdir build && cd build
           cmake .. -DCMAKE_BUILD_TYPE=Debug \
+                   -DBUILD_EXAMPLES=OFF \
                    -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
           cmake --build . -- -j$(nproc)
 
@@ -65,7 +66,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install deps
-        run: dnf install -y cmake gcc make rpm-build json-devel lcov
+        run: dnf install -y cmake gcc make rpm-build json-devel lcov gcc-c++ curl-devel
 
       - name: Build with CMake + CPack (with coverage)
         run: |
@@ -115,7 +116,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install deps
-        run: pacman -Syu --noconfirm base-devel git cmake nlohmann-json lcov
+        run: pacman -Syu --noconfirm base-devel git cmake nlohmann-json lcov curl gcc
 
       - name: Compute SHA256 of release tarball
         run: |
@@ -128,6 +129,7 @@ jobs:
         run: |
           mkdir build && cd build
           cmake .. -DCMAKE_BUILD_TYPE=Debug \
+                   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
                    -DCMAKE_CXX_FLAGS="--coverage -O0 -g"
           cmake --build . -- -j$(nproc)
           ctest --output-on-failure || true
