@@ -49,6 +49,7 @@ jobs:
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build -- -j$(nproc)
           (cd build && cpack -G DEB && cpack -G TGZ)
+          cd /home/runner/work/llama-cpp-tools/llama-cpp-tools/packaging
           dpkg-buildpackage -us -uc -b
 
       - name: Upload Debian artifacts
@@ -97,7 +98,7 @@ jobs:
         run: |
           dnf install -y rpmdevtools
           rpmdev-setuptree
-          cp llama-cpp-tools.spec ~/rpmbuild/SPECS/
+          cp packaging/RHEL/llama-cpp-tools.spec ~/rpmbuild/SPECS/
           cp ../*.tar.gz ~/rpmbuild/SOURCES/
           rpmbuild -ba ~/rpmbuild/SPECS/llama-cpp-tools.spec
 
@@ -120,7 +121,7 @@ jobs:
         run: |
           curl -L -o v${{ github.ref_name }}.tar.gz \
             https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/${{ github.ref_name }}.tar.gz
-          SHA=$(sha256sum v${{ github.ref_name }}.tar.gz | awk '{print $1}')
+          SHA=$(sha256sum ${{ github.ref_name }}.tar.gz | awk '{print $1}')
           sed -i "s/sha256sums=('SKIP')/sha256sums=('${SHA}')/" packaging/arch/PKGBUILD
 
       - name: Build Arch package (with coverage)
