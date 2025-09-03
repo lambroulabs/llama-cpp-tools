@@ -17,6 +17,7 @@ jobs:
           sudo apt-get install -y build-essential cmake ninja-build \
             debhelper devscripts dpkg-dev \
             nlohmann-json3-dev lcov curl libcurl4-openssl-dev catch2
+
       - name: Build with CMake + CPack (with coverage)
         run: |
           mkdir build && cd build
@@ -37,19 +38,15 @@ jobs:
           lcov --capture --directory . --output-file coverage.info --ignore-errors source
           lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
           genhtml coverage.info --output-directory coverage-html
-
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ubuntu-coverage
-          path: build/coverage-html
+          mkdir -p ../coverage-html/ubuntu
+          cp -r coverage-html/* ../coverage-html/ubuntu/
 
       - name: Package with CPack and Debian policy
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build -- -j$(nproc)
           (cd build && cpack -G DEB && cpack -G TGZ)
-          cd /home/runner/work/llama-cpp-tools/llama-cpp-tools/packaging
+          ln -s packaging/debian debian
           dpkg-buildpackage -us -uc -b
 
       - name: Upload Debian artifacts
@@ -87,19 +84,15 @@ jobs:
           lcov --capture --directory . --output-file coverage.info --ignore-errors source
           lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
           genhtml coverage.info --output-directory coverage-html
-
-      - name: Upload Fedora coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fedora-coverage
-          path: build/coverage-html
+          mkdir -p ../coverage-html/fedora
+          cp -r coverage-html/* ../coverage-html/fedora/
 
       - name: Build RPM from spec
         run: |
           dnf install -y rpmdevtools
           rpmdev-setuptree
           cp packaging/RHEL/llama-cpp-tools.spec ~/rpmbuild/SPECS/
-          cp ../*.tar.gz ~/rpmbuild/SOURCES/
+          cp build/*.tar.gz ~/rpmbuild/SOURCES/
           rpmbuild -ba ~/rpmbuild/SPECS/llama-cpp-tools.spec
 
       - name: Upload Fedora RPM artifacts
@@ -119,9 +112,11 @@ jobs:
 
       - name: Compute SHA256 of release tarball
         run: |
-          curl -L -o v${{ github.ref_name }}.tar.gz \
-            https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/${{ github.ref_name }}.tar.gz
-          SHA=$(sha256sum ${{ github.ref_name }}.tar.gz | awk '{print $1}')
+          TAG_NAME=${GITHUB_REF_NAME}  # e.g. v0.1.0
+          TAR_NAME="llama-cpp-tools-${TAG_NAME}.tar.gz"
+          curl -L -o "$TAR_NAME" \
+            "https://github.com/lambroulabs/llama-cpp-tools/archive/refs/tags/${TAG_NAME}.tar.gz"
+          SHA=$(sha256sum "$TAR_NAME" | awk '{print $1}')
           sed -i "s/sha256sums=('SKIP')/sha256sums=('${SHA}')/" packaging/arch/PKGBUILD
 
       - name: Build Arch package (with coverage)
@@ -135,20 +130,31 @@ jobs:
           lcov --capture --directory . --output-file coverage.info --ignore-errors source
           lcov --remove coverage.info '/usr/*' 'tests/*' --output-file coverage.info --ignore-errors source
           genhtml coverage.info --output-directory coverage-html
+          mkdir -p ../coverage-html/arch
+          cp -r coverage-html/* ../coverage-html/arch/
           cd ..
           useradd -m builder
           chown -R builder:builder .
           cd packaging/arch
           su builder -c "makepkg -si --noconfirm --clean --syncdeps"
 
-      - name: Upload Arch coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: arch-coverage
-          path: build/coverage-html
-
       - name: Upload Arch package
         uses: actions/upload-artifact@v4
         with:
           name: arch-packages
-          path: "*.pkg.tar.zst"
+          path: packaging/arch/*.pkg.tar.zst
+
+  upload-coverage:
+    runs-on: ubuntu-latest
+    needs: [build-ubuntu, build-fedora, build-arch]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect coverage
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Upload merged coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: artifacts/**/coverage-html
