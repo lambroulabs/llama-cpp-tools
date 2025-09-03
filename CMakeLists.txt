@@ -28,14 +28,7 @@ set_target_properties(llama_cpp_tools PROPERTIES
 
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
-  include(FetchContent)
-  FetchContent_Declare(
-    catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v3.4.0
-  )
-  FetchContent_MakeAvailable(catch2)
-
+  find_package(Catch2 3 REQUIRED)
   enable_testing()
   add_executable(tests tests/tests.cpp)
   target_link_libraries(tests PRIVATE llama_cpp_tools nlohmann_json::nlohmann_json Catch2::Catch2WithMain)

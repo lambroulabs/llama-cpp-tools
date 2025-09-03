@@ -10,7 +10,9 @@ Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
 BuildRequires:  cmake
 BuildRequires:  gcc
 BuildRequires:  make
-BuildRequires:  nlohmann-json-devel
+BuildRequires:  json-devel
+BuildRequires:  catch2-devel
+BuildRequires:  gcc-c++
 Requires:       glibc
 
 %description
