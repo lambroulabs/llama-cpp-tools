@@ -95,7 +95,6 @@ jobs:
           cp llama-cpp-tools-*.tar.gz ~/rpmbuild/SOURCES/
           rpmbuild -ba ~/rpmbuild/SPECS/llama-cpp-tools.spec
 
-
       - name: Upload Fedora RPM artifacts
         uses: actions/upload-artifact@v4
         with:
