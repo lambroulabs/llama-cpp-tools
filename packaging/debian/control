@@ -1,0 +1,22 @@
+Source: llama-cpp-tools
+Section: devel
+Priority: optional
+Maintainer: Alexander Lambrou <alexanderlambrou0602@gmail.com>
+Build-Depends: debhelper-compat (= 13), cmake, g++, nlohmann-json3-dev
+Standards-Version: 4.6.2
+Homepage: https://github.com/lambroulabs/llama-cpp-tools
+Vcs-Git: https://github.com/lambroulabs/llama-cpp-tools
+Vcs-Browser: https://github.com/lambroulabs/llama-cpp-tools
+
+Package: llama-cpp-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: C++ llama.cpp function calling tool registry (runtime)
+ This package contains the llama-cpp-tools runtime binaries and shared libraries.
+
+Package: libllama-cpp-tools-dev
+Architecture: any
+Depends: llama-cpp-tools (= ${binary:Version}), ${misc:Depends}
+Description: Development files for llama-cpp-tools
+ This package contains headers, CMake config files, and static libraries
+ for developing against llama-cpp-tools.
