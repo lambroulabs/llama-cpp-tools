@@ -6,20 +6,8 @@ cmake_policy(VERSION 3.14)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
-FetchContent_Declare(
-  nlohmann_json
-  GIT_REPOSITORY https://github.com/nlohmann/json.git
-  GIT_TAG v3.11.2
-)
-FetchContent_MakeAvailable(nlohmann_json)
-
-FetchContent_Declare(
-  openai_cpp
-  GIT_REPOSITORY https://github.com/olrea/openai-cpp.git
-  GIT_TAG main
-)
-FetchContent_MakeAvailable(openai_cpp)
+set(JSON_Install OFF CACHE INTERNAL "")
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 add_library(llama_cpp_tools SHARED src/tool_registry.cpp)
 target_link_libraries(llama_cpp_tools PRIVATE nlohmann_json::nlohmann_json)
