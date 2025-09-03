@@ -5,6 +5,8 @@ cmake_policy(VERSION 3.14)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
 
 set(JSON_Install OFF CACHE INTERNAL "")
 find_package(nlohmann_json 3.2.0 REQUIRED)
@@ -28,14 +30,14 @@ set_target_properties(llama_cpp_tools PROPERTIES
 
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
-  find_package(catch2 3 REQUIRED)
+  find_package(Catch2 3 REQUIRED)
   enable_testing()
   add_executable(tests tests/tests.cpp)
   target_link_libraries(tests
     PRIVATE
       llama_cpp_tools
       nlohmann_json::nlohmann_json
-      catch2::catch2
+      Catch2::Catch2
   )
   add_test(NAME llama_cpp_tools_tests COMMAND tests)
 endif()
