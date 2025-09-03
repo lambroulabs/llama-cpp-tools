@@ -31,9 +31,15 @@ if(BUILD_TESTS)
   find_package(Catch2 3 REQUIRED)
   enable_testing()
   add_executable(tests tests/tests.cpp)
-  target_link_libraries(tests PRIVATE llama_cpp_tools nlohmann_json::nlohmann_json Catch2::Catch2WithMain)
+  target_link_libraries(tests
+    PRIVATE
+      llama_cpp_tools
+      nlohmann_json::nlohmann_json
+      Catch2::Catch2WithMain
+  )
   add_test(NAME llama_cpp_tools_tests COMMAND tests)
 endif()
+
 
 install(TARGETS llama_cpp_tools
   EXPORT llama_cpp_toolsTargets

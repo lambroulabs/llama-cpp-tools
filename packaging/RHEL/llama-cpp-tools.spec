@@ -22,7 +22,8 @@ integrates with llama.cpp and related projects.
 %package devel
 Summary:        Development files for llama-cpp-tools
 Requires:       %{name} = %{version}-%{release}
-Requires:       nlohmann-json-devel
+Requires:       json-devel
+Requires:       catch2-devel
 
 %description devel
 The llama-cpp-tools development package contains headers, CMake config
