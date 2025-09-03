@@ -104,25 +104,6 @@ try {
 }
 ```
 
-## Packaging
-
-`CMakeLists.txt` is configured to support packaging via CPack (DEB/RPM/TGZ) and installs a `pkg-config` file template (`cmake/llama-cpp-tools.pc.in`).
-
-Suggested workflows:
-
-- Build .deb/.rpm quickly with CPack:
-
-```bash
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . -- -j
-cpack -G DEB   # or -G RPM
-```
-
-- For distro-quality packages, create `debian/` (debhelper) or an RPM spec and build in clean chroots. For Arch, create a `PKGBUILD` that runs the normal cmake build and `make install` into `$pkgdir`.
-
-See `packaging/README.md` for details and tips.
-
 ## Tests
 
 Build and run the test suite (Catch2):
