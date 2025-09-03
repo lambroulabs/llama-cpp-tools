@@ -20,10 +20,7 @@ Requires: CMake >= 3.14, a C++17 compiler, network access for FetchContent.
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . -- -j
-./examples/example_app
 ```
-
-The example demonstrates static `LCT_TOOL` registration, runtime `ToolSpec` registration, printing the `tools` JSON, and handling an API response that requests a tool call.
 
 ## API overview
 
