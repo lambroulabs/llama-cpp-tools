@@ -58,7 +58,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/llama-cpp-tools.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/llama-cpp-tools.pc @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llama-cpp-tools.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DOCDIR})
 
 
 
