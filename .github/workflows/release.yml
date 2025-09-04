@@ -6,6 +6,9 @@ on:
       - "v*.*.*"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
@@ -134,6 +137,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
+
+      - name: Collect Debian packages
+        run: |
+          mkdir -p artifacts/debian-packages
+          mv ../*.deb artifacts/debian-packages/ || true
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v1
