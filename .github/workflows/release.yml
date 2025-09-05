@@ -55,6 +55,8 @@ jobs:
           (cd build && cpack -G DEB && cpack -G TGZ)
           ln -s packaging/debian debian
           dpkg-buildpackage -us -uc -b
+          mkdir -p deb-out
+          mv ../*.deb deb-out/
 
       - name: Upload Debian artifacts
         uses: actions/upload-artifact@v4
@@ -147,5 +149,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            artifacts/debian-packages/*.deb
-            artifacts/arch-packages/*.pkg.tar.zst
+            packaging/arch/*.pkg.tar.zst#llama-cpp-tools-${{ github.ref_name }}-arch.pkg.tar.zst
+            ./*.deb#llama-cpp-tools-${{ github.ref_name }}-debian.deb
+
