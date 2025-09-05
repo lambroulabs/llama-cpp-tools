@@ -143,12 +143,16 @@ jobs:
       - name: Collect Debian packages
         run: |
           mkdir -p artifacts/debian-packages
-          mv ../*.deb artifacts/debian-packages/ || true
+          find artifacts -name '*.deb' -exec mv {} artifacts/debian-packages/ \;
+
+      - name: Collect Arch packages
+        run: |
+          mkdir -p artifacts/arch-packages
+          find artifacts -name '*.pkg.tar.zst' -exec mv {} artifacts/arch-packages/ \;
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            packaging/arch/*.pkg.tar.zst#llama-cpp-tools-${{ github.ref_name }}-arch.pkg.tar.zst
-            ./*.deb#llama-cpp-tools-${{ github.ref_name }}-debian.deb
-
+            artifacts/arch-packages/*.pkg.tar.zst
+            artifacts/debian-packages/*.deb
