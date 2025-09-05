@@ -1,3 +1,9 @@
+## Build Status
+
+![Ubuntu Build](https://img.shields.io/github/actions/workflow/status/lambroulabs/llama-cpp-tools/workflow.yml?branch=main&job=build-ubuntu&label=ubuntu&logo=ubuntu)
+![Arch Build](https://img.shields.io/github/actions/workflow/status/lambroulabs/llama-cpp-tools/workflow.yml?branch=main&job=build-arch&label=arch&logo=arch-linux)
+![Coverage](https://img.shields.io/github/actions/workflow/status/lambroulabs/llama-cpp-tools/workflow.yml?branch=main&job=upload-coverage&label=coverage&logo=codecov)
+
 # llama-cpp-tools
 
 A tiny C++ library to register "tools" (functions) and expose them to LLMs using structured function calling (llama.cpp / OpenAI-style). Supports concurrent tool calls and streaming.
