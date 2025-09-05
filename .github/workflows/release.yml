@@ -62,7 +62,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: debian-packages
-          path: ${{ github.workspace }}/*.deb
+          path: ${{ github.workspace }}/deb-out/*.deb
+
 
   build-arch:
     runs-on: ubuntu-latest
