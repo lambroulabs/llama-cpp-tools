@@ -1,6 +1,4 @@
-![Ubuntu Build](https://img.shields.io/github/actions/workflow/status/lambroulabs/llama-cpp-tools/release.yml?style=for-the-badge&logo=ubuntu&label=Ubuntu&link=https%3A%2F%2Fgithub.com%2Flambroulabs%2Fllama-cpp-tools%2Freleases)
-![Arch Build](https://img.shields.io/github/actions/workflow/status/lambroulabs/llama-cpp-tools/release.yml?style=for-the-badge&logo=arch-linux&label=Arch&link=https%3A%2F%2Fgithub.com%2Flambroulabs%2Fllama-cpp-tools%2Freleases)
-![Coverage](https://img.shields.io/github/actions/workflow/status/lambroulabs/llama-cpp-tools/release.yml?style=for-the-badge&logo=codecov&label=Coverage&link=https%3A%2F%2Fgithub.com%2Flambroulabs%2Fllama-cpp-tools%2Freleases)
+![Workflow Build](https://img.shields.io/github/actions/workflow/status/lambroulabs/llama-cpp-tools/release.yml?style=for-the-badge&label=Build)
 
 
 # llama-cpp-tools
